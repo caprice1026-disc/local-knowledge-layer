@@ -357,6 +357,14 @@ def _snippet(body: str, query: str, limit: int = 240) -> str:
     return normalized[:limit]
 
 
+def _safe_fts_query(query: str) -> str:
+    text = (query or "").strip()
+    if not text:
+        return "\"\""
+    escaped = text.replace("\"", "\"\"")
+    return f"\"{escaped}\""
+
+
 def _search_scope(connection: sqlite3.Connection, query: str, layer: str, limit: int, project: str | None) -> list[dict[str, Any]]:
     sql = """
     SELECT d.doc_id, d.file_path, d.title, d.body, d.tags, d.kind, d.project, d.service, d.source_url, d.last_checked, d.freshness,
@@ -365,7 +373,7 @@ def _search_scope(connection: sqlite3.Connection, query: str, layer: str, limit:
     JOIN documents d ON d.rowid = documents_fts.rowid
     WHERE documents_fts MATCH ?
     """
-    params: list[Any] = [query]
+    params: list[Any] = [_safe_fts_query(query)]
     if layer == "project":
         sql += " AND d.file_path LIKE ?"
         params.append("%/knowledge/normalized/project/%")
