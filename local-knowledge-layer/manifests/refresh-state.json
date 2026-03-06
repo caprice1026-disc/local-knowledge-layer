@@ -1,0 +1,78 @@
+{
+  "last_run": "2026-03-06T12:10:12.159658Z",
+  "history": [
+    {
+      "timestamp": "2026-03-06T12:05:59.138506Z",
+      "checked": 4,
+      "due": 4,
+      "updated": 0,
+      "unchanged": 3,
+      "skipped": 0,
+      "errors": 0,
+      "details": [
+        {
+          "source_id": "src-project-spec-9f833d815e2f",
+          "status": "local_source"
+        },
+        {
+          "source_id": "src-api-spec-5e666e5966ea",
+          "status": "would_update"
+        },
+        {
+          "source_id": "src-integration-note-a9d4b03cc865",
+          "status": "local_source"
+        },
+        {
+          "source_id": "src-concept-note-ce5f552e8847",
+          "status": "local_source"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-03-06T12:06:22.553852Z",
+      "checked": 1,
+      "due": 1,
+      "updated": 1,
+      "unchanged": 0,
+      "skipped": 0,
+      "errors": 0,
+      "details": [
+        {
+          "source_id": "src-api-spec-5e666e5966ea",
+          "status": "updated",
+          "count": 19
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-03-06T12:08:12.002450Z",
+      "checked": 1,
+      "due": 0,
+      "updated": 0,
+      "unchanged": 0,
+      "skipped": 1,
+      "errors": 0,
+      "details": [
+        {
+          "source_id": "src-api-spec-5e666e5966ea",
+          "status": "skip_ttl"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-03-06T12:10:12.159658Z",
+      "checked": 1,
+      "due": 0,
+      "updated": 0,
+      "unchanged": 0,
+      "skipped": 1,
+      "errors": 0,
+      "details": [
+        {
+          "source_id": "src-api-spec-5e666e5966ea",
+          "status": "skip_ttl"
+        }
+      ]
+    }
+  ]
+}

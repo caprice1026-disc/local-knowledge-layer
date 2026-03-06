@@ -1,0 +1,4 @@
+interface:
+  display_name: "Local Knowledge Layer"
+  short_description: "Local cache layer for API/project/external knowledge retrieval."
+  default_prompt: "Use $local-knowledge-layer to ingest, harvest, refresh, and search local knowledge before web lookup."
