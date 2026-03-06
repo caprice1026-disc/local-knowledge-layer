@@ -33,6 +33,57 @@ python -m pip install pyyaml
 - `local-knowledge-layer/manifests/sources.json`
 - `local-knowledge-layer/manifests/refresh-state.json`
 
+## Claude Code / OpenAI Codex への導入（Skillとして）
+
+このリポジトリを Skill 本体として使う場合は、`local-knowledge-layer/` ディレクトリを各ツールの Skill 検索パスに配置します。
+
+### Claude Code に導入する
+
+プロジェクト単位（推奨）:
+
+```powershell
+New-Item -ItemType Directory -Force .\.claude\skills\local-knowledge-layer | Out-Null
+Copy-Item -Path .\local-knowledge-layer\* -Destination .\.claude\skills\local-knowledge-layer -Recurse -Force
+```
+
+ユーザー共通:
+
+```powershell
+New-Item -ItemType Directory -Force "$HOME\\.claude\\skills\\local-knowledge-layer" | Out-Null
+Copy-Item -Path .\local-knowledge-layer\* -Destination "$HOME\\.claude\\skills\\local-knowledge-layer" -Recurse -Force
+```
+
+使い方:
+- `name: local-knowledge-layer` なので `/local-knowledge-layer` で直接呼び出せます。
+- `description` に一致するタスクでは自動ロードされる場合があります。
+
+### OpenAI Codex に導入する
+
+リポジトリ単位（推奨）:
+
+```powershell
+New-Item -ItemType Directory -Force .\.agents\skills\local-knowledge-layer | Out-Null
+Copy-Item -Path .\local-knowledge-layer\* -Destination .\.agents\skills\local-knowledge-layer -Recurse -Force
+```
+
+ユーザー共通:
+
+```powershell
+New-Item -ItemType Directory -Force "$HOME\\.agents\\skills\\local-knowledge-layer" | Out-Null
+Copy-Item -Path .\local-knowledge-layer\* -Destination "$HOME\\.agents\\skills\\local-knowledge-layer" -Recurse -Force
+```
+
+使い方:
+- Codex は `.agents/skills`（CWD からリポジトリルートまで）と `$HOME/.agents/skills` を走査します。
+- `/skills` か `$` 補完から `local-knowledge-layer` を選択して呼び出せます。
+- 必要なら `~/.codex/config.toml` の `[[skills.config]]` で有効/無効を制御できます。
+
+### 公式ドキュメント
+
+- Claude Code Skills: <https://code.claude.com/docs/en/skills>
+- OpenAI Codex Agent Skills: <https://developers.openai.com/codex/skills/>
+- OpenAI Codex CLI: <https://developers.openai.com/codex/cli/>
+
 ## クイックスタート
 
 作業ディレクトリをリポジトリルート（この README がある場所）にして実行してください。
