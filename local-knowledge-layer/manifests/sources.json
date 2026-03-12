@@ -1,13 +1,13 @@
 {
   "sources": [
     {
-      "source_id": "src-project-spec-9f833d815e2f",
+      "source_id": "src-project-spec-a41a7eea2891",
       "kind": "project_spec",
       "layer": "project",
       "title": "Checkout Spec",
       "project": "demo-shop",
       "service": "",
-      "source_url": "file:///C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/tmp/project-spec.md",
+      "source_url": "manual://project-spec-md",
       "source_type": "markdown",
       "last_checked": "2026-03-06T12:05:58.292896Z",
       "freshness": "medium",
@@ -15,9 +15,9 @@
       "last_modified": "",
       "version_hint": "",
       "hash": "59c0bc0053f37c6240ab1db8e1f9574a80ef931609a6afba29ac52efd716775e",
-      "raw_path": "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/raw/project_spec/demo-shop/20260306T120322.239721Z_checkout-spec.md",
+      "raw_path": "knowledge/raw/project_spec/demo-shop/20260306T120322.239721Z_checkout-spec.md",
       "normalized_paths": [
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/project/demo-shop/specs/checkout-spec.md"
+        "knowledge/normalized/project/demo-shop/specs/checkout-spec.md"
       ],
       "ttl_days": 30
     },
@@ -36,27 +36,27 @@
       "last_modified": "",
       "version_hint": "",
       "hash": "00441c05add60f28da55eb4563d3fb6bbda364ba8eb7b381e2e2c98613005c82",
-      "raw_path": "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/raw/api_spec/petstore/20260306T120622.176555Z_petstore-api.json",
+      "raw_path": "knowledge/raw/api_spec/petstore/20260306T120622.176555Z_petstore-api.json",
       "normalized_paths": [
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/pet/updatepet.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/pet/addpet.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/findbystatus/findpetsbystatus.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/findbytags/findpetsbytags.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/pet/getpetbyid.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/pet/updatepetwithform.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/pet/deletepet.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/uploadimage/uploadfile.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/inventory/getinventory.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/order/placeorder.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/order/getorderbyid.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/order/deleteorder.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/user/createuser.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/createwithlist/createuserswithlistinput.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/login/loginuser.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/logout/logoutuser.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/user/getuserbyname.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/user/updateuser.md",
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/services/petstore/user/deleteuser.md"
+        "knowledge/normalized/external/services/petstore/pet/updatepet.md",
+        "knowledge/normalized/external/services/petstore/pet/addpet.md",
+        "knowledge/normalized/external/services/petstore/findbystatus/findpetsbystatus.md",
+        "knowledge/normalized/external/services/petstore/findbytags/findpetsbytags.md",
+        "knowledge/normalized/external/services/petstore/pet/getpetbyid.md",
+        "knowledge/normalized/external/services/petstore/pet/updatepetwithform.md",
+        "knowledge/normalized/external/services/petstore/pet/deletepet.md",
+        "knowledge/normalized/external/services/petstore/uploadimage/uploadfile.md",
+        "knowledge/normalized/external/services/petstore/inventory/getinventory.md",
+        "knowledge/normalized/external/services/petstore/order/placeorder.md",
+        "knowledge/normalized/external/services/petstore/order/getorderbyid.md",
+        "knowledge/normalized/external/services/petstore/order/deleteorder.md",
+        "knowledge/normalized/external/services/petstore/user/createuser.md",
+        "knowledge/normalized/external/services/petstore/createwithlist/createuserswithlistinput.md",
+        "knowledge/normalized/external/services/petstore/login/loginuser.md",
+        "knowledge/normalized/external/services/petstore/logout/logoutuser.md",
+        "knowledge/normalized/external/services/petstore/user/getuserbyname.md",
+        "knowledge/normalized/external/services/petstore/user/updateuser.md",
+        "knowledge/normalized/external/services/petstore/user/deleteuser.md"
       ],
       "ttl_days": 7
     },
@@ -75,9 +75,9 @@
       "last_modified": "",
       "version_hint": "",
       "hash": "3c2ce1794b6b2b498c42d6b0ec27a994689764086246792d91cdfd3b4a16ebd1",
-      "raw_path": "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/raw/integration_note/skill-runtime/20260306T120503.538259Z_retry-integration-note.txt",
+      "raw_path": "knowledge/raw/integration_note/skill-runtime/20260306T120503.538259Z_retry-integration-note.txt",
       "normalized_paths": [
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/skills/skill-runtime/retry-integration-note.md"
+        "knowledge/normalized/skills/skill-runtime/retry-integration-note.md"
       ],
       "ttl_days": 30
     },
@@ -96,9 +96,9 @@
       "last_modified": "",
       "version_hint": "",
       "hash": "1cc56b61f812ad5f38925d92b0749bd5942732b22ca08b335373ab207cfe58af",
-      "raw_path": "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/raw/concept_note/web-knowledge/20260306T120503.811335Z_retry-concept.txt",
+      "raw_path": "knowledge/raw/concept_note/web-knowledge/20260306T120503.811335Z_retry-concept.txt",
       "normalized_paths": [
-        "C:/Users/Hodaka/Downloads/div/local-knowledge-layer/local-knowledge-layer/knowledge/normalized/external/concepts/retry-concept.md"
+        "knowledge/normalized/external/concepts/retry-concept.md"
       ],
       "ttl_days": 30
     }

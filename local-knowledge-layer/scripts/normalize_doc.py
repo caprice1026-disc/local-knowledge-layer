@@ -418,7 +418,7 @@ def main() -> None:
         source_name = args.source_url
 
     source_type = detect_source_type(source_name, content, args.source_type)
-    source_url = args.source_url or (Path(args.input_path).resolve().as_uri() if args.input_path else "manual://inline")
+    source_url = cache_lib.source_reference(args.input_path, args.source_url)
     docs = normalize_source(
         kind=args.kind,
         content=content,

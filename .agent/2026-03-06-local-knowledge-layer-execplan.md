@@ -78,7 +78,7 @@
 
 ## Concrete Steps
 
-作業ディレクトリは `C:\Users\Hodaka\Downloads\div\local-knowledge-layer`。
+作業ディレクトリはリポジトリルートです。
 
 1. RED テスト作成と失敗確認。
    実行コマンド:
@@ -101,7 +101,7 @@
 
 5. バリデーションとパッケージング。
    実行コマンド:
-   `python C:\Users\Hodaka\.codex\skills\.system\skill-creator\scripts\quick_validate.py local-knowledge-layer`
+   `python "$CODEX_HOME/skills/.system/skill-creator/scripts/quick_validate.py" local-knowledge-layer`
    `Compress-Archive -Path local-knowledge-layer\* -DestinationPath skill.zip -Force`
 
 ## Validation and Acceptance

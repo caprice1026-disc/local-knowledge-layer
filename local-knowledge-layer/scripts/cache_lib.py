@@ -8,7 +8,7 @@ import sqlite3
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
-from urllib.parse import quote_plus, urljoin, urlparse
+from urllib.parse import quote_plus, unquote, urljoin, urlparse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 
@@ -128,10 +128,44 @@ def normalize_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
     data.setdefault("last_checked", now_iso())
     data.setdefault("freshness", "medium")
     data.setdefault("version_hint", "")
+    data["source_url"] = sanitize_source_url(str(data.get("source_url", "")))
     data["tags"] = to_list(data.get("tags"))
     data["related"] = to_list(data.get("related"))
     data["sample_questions"] = to_list(data.get("sample_questions"))
     return data
+
+
+def _manual_source_name(label: str) -> str:
+    path = Path(label)
+    stem = path.stem.strip()
+    suffix = path.suffix.lstrip(".").strip()
+    if stem and suffix:
+        return slugify(f"{stem}-{suffix}", "local-file")
+    if stem:
+        return slugify(stem, "local-file")
+    if path.name.strip():
+        return slugify(path.name.strip(), "local-file")
+    return "local-file"
+
+
+def sanitize_source_url(source_url: str) -> str:
+    value = (source_url or "").strip()
+    if not value:
+        return ""
+
+    parsed = urlparse(value)
+    if parsed.scheme == "file":
+        local_name = Path(unquote(parsed.path)).name
+        return f"manual://{_manual_source_name(local_name)}"
+    return value
+
+
+def source_reference(input_path: str | None = None, source_url: str | None = None) -> str:
+    if source_url:
+        return sanitize_source_url(source_url)
+    if input_path:
+        return f"manual://{_manual_source_name(Path(input_path).name)}"
+    return "manual://inline"
 
 
 def to_list(value: Any) -> list[str]:
@@ -216,26 +250,49 @@ def write_normalized_doc(root: Path, relative_path: str, metadata: dict[str, Any
     return path.resolve()
 
 
-def parse_markdown(path: Path) -> dict[str, Any]:
+def _cache_relative_path(path: Path, root: Path | None = None) -> str:
+    resolved = path.resolve()
+    if root is not None:
+        try:
+            return resolved.relative_to(root.resolve()).as_posix()
+        except ValueError:
+            pass
+
+    normalized = resolved.as_posix()
+    match = re.search(r"(^|/)(knowledge/.+)$", normalized)
+    if match:
+        return match.group(2)
+    return normalized
+
+
+def resolve_cached_file_path(root: Path, file_path: str) -> str:
+    normalized = file_path.replace("\\", "/").strip()
+    match = re.search(r"(^|/)(knowledge/.+)$", normalized)
+    if match:
+        return (root.resolve() / Path(match.group(2))).resolve().as_posix()
+    return Path(normalized).expanduser().resolve().as_posix()
+
+
+def parse_markdown(path: Path, root: Path | None = None) -> dict[str, Any]:
     raw = path.read_text(encoding="utf-8").lstrip("\ufeff")
     metadata, body = parse_frontmatter(raw)
     return {
         "metadata": normalize_metadata(metadata),
         "body": body,
         "hash": hashlib.sha256(raw.encode("utf-8")).hexdigest(),
-        "file_path": path.resolve().as_posix(),
+        "file_path": _cache_relative_path(path, root),
     }
 
 
 def infer_layer(file_path: str) -> str:
-    normalized = file_path.replace("\\", "/")
-    if "/knowledge/normalized/project/" in normalized:
+    normalized = _cache_relative_path(Path(file_path))
+    if normalized.startswith("knowledge/normalized/project/"):
         return "project"
-    if "/knowledge/normalized/skills/" in normalized:
+    if normalized.startswith("knowledge/normalized/skills/"):
         return "skills"
-    if "/knowledge/normalized/external/" in normalized:
+    if normalized.startswith("knowledge/normalized/external/"):
         return "external"
-    if "/knowledge/normalized/global/" in normalized:
+    if normalized.startswith("knowledge/normalized/global/"):
         return "global"
     return "unknown"
 
@@ -305,11 +362,13 @@ def _connect_db(path: Path) -> sqlite3.Connection:
 def rebuild_index(root: Path) -> Path:
     ensure_storage(root)
     db_file = root / "index" / "knowledge.db"
+    if db_file.exists():
+        db_file.unlink()
     connection = _connect_db(db_file)
     try:
         connection.execute("DELETE FROM documents")
         for path in sorted((root / "knowledge" / "normalized").rglob("*.md")):
-            parsed = parse_markdown(path)
+            parsed = parse_markdown(path, root=root)
             metadata = parsed["metadata"]
             connection.execute(
                 """
@@ -365,7 +424,7 @@ def _safe_fts_query(query: str) -> str:
     return f"\"{escaped}\""
 
 
-def _search_scope(connection: sqlite3.Connection, query: str, layer: str, limit: int, project: str | None) -> list[dict[str, Any]]:
+def _search_scope(connection: sqlite3.Connection, root: Path, query: str, layer: str, limit: int, project: str | None) -> list[dict[str, Any]]:
     sql = """
     SELECT d.doc_id, d.file_path, d.title, d.body, d.tags, d.kind, d.project, d.service, d.source_url, d.last_checked, d.freshness,
            bm25(documents_fts, 1.2, 1.0, 0.7, 0.4, 0.2, 0.2, 0.2) AS score
@@ -375,17 +434,24 @@ def _search_scope(connection: sqlite3.Connection, query: str, layer: str, limit:
     """
     params: list[Any] = [_safe_fts_query(query)]
     if layer == "project":
-        sql += " AND d.file_path LIKE ?"
-        params.append("%/knowledge/normalized/project/%")
+        sql += " AND (d.file_path LIKE ? OR d.file_path LIKE ?)"
+        params.extend(["knowledge/normalized/project/%", "%/knowledge/normalized/project/%"])
         if project:
             sql += " AND d.project = ?"
             params.append(project)
     elif layer == "skills":
-        sql += " AND d.file_path LIKE ?"
-        params.append("%/knowledge/normalized/skills/%")
-    else:
         sql += " AND (d.file_path LIKE ? OR d.file_path LIKE ?)"
-        params.extend(["%/knowledge/normalized/external/%", "%/knowledge/normalized/global/%"])
+        params.extend(["knowledge/normalized/skills/%", "%/knowledge/normalized/skills/%"])
+    else:
+        sql += " AND (d.file_path LIKE ? OR d.file_path LIKE ? OR d.file_path LIKE ? OR d.file_path LIKE ?)"
+        params.extend(
+            [
+                "knowledge/normalized/external/%",
+                "%/knowledge/normalized/external/%",
+                "knowledge/normalized/global/%",
+                "%/knowledge/normalized/global/%",
+            ]
+        )
     sql += " ORDER BY score LIMIT ?"
     params.append(limit)
     rows = connection.execute(sql, params).fetchall()
@@ -394,7 +460,7 @@ def _search_scope(connection: sqlite3.Connection, query: str, layer: str, limit:
         results.append(
             {
                 "doc_id": row[0],
-                "file_path": row[1],
+                "file_path": resolve_cached_file_path(root, row[1]),
                 "title": row[2],
                 "snippet": _snippet(row[3], query),
                 "tags": to_list(row[4]),
@@ -452,7 +518,7 @@ def search_hierarchy(root: Path, query: str, top_n: int = 5, project: str | None
         for layer in ["project", "skills", "external_global"]:
             if len(results) >= top_n:
                 break
-            scoped = _search_scope(connection, query, layer, top_n, project)
+            scoped = _search_scope(connection, root, query, layer, top_n, project)
             for item in scoped:
                 if item["doc_id"] in seen:
                     continue

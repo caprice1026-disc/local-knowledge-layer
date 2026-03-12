@@ -29,7 +29,7 @@ class IndexAndSearchTests(unittest.TestCase):
                 "title": "Project Payment Intent Rule",
                 "project": "demo",
                 "service": "stripe",
-                "source_url": "local://project",
+                "source_url": "manual://project-fixture",
                 "source_type": "markdown",
                 "last_checked": "2026-03-06T00:00:00Z",
                 "freshness": "stable",
@@ -49,7 +49,7 @@ class IndexAndSearchTests(unittest.TestCase):
                 "title": "Skill Payment Intent Note",
                 "project": "",
                 "service": "stripe",
-                "source_url": "local://skill",
+                "source_url": "manual://skill-fixture",
                 "source_type": "markdown",
                 "last_checked": "2026-03-06T00:00:00Z",
                 "freshness": "medium",
@@ -93,6 +93,46 @@ class IndexAndSearchTests(unittest.TestCase):
         self.assertGreaterEqual(len(result["results"]), 1)
         self.assertEqual("project", result["results"][0]["layer"])
         self.assertEqual(str(project_doc.as_posix()), result["results"][0]["file_path"])
+
+    def test_search_uses_copied_root_paths_after_cache_directory_move(self):
+        write_normalized_doc(
+            root=self.tmpdir,
+            relative_path="knowledge/normalized/project/demo/specs/checkout.md",
+            metadata={
+                "id": "doc-checkout",
+                "kind": "project_spec",
+                "title": "Checkout Spec",
+                "project": "demo",
+                "service": "",
+                "source_url": "manual://project-fixture",
+                "source_type": "markdown",
+                "last_checked": "2026-03-06T00:00:00Z",
+                "freshness": "medium",
+                "tags": ["checkout"],
+                "related": [],
+                "sample_questions": ["What does checkout require?"],
+            },
+            body="# Checkout\nOrder creation must be idempotent.",
+        )
+
+        rebuild_index(self.tmpdir)
+
+        moved_root = Path(tempfile.mkdtemp(prefix="lk_layer_moved_"))
+        self.addCleanup(lambda: shutil.rmtree(moved_root, ignore_errors=True))
+        copied_root = moved_root / "copied-skill"
+        shutil.copytree(self.tmpdir, copied_root)
+
+        result = search_hierarchy(
+            root=copied_root,
+            query="checkout",
+            top_n=1,
+            project="demo",
+            allow_web_fallback=False,
+        )
+
+        self.assertEqual(1, len(result["results"]))
+        expected_path = copied_root / "knowledge" / "normalized" / "project" / "demo" / "specs" / "checkout.md"
+        self.assertEqual(expected_path.resolve().as_posix(), result["results"][0]["file_path"])
 
 
 if __name__ == "__main__":

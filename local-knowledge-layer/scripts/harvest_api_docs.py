@@ -76,7 +76,7 @@ def harvest(args: argparse.Namespace) -> dict[str, Any]:
             idx=idx,
         )
         file_path = cache_lib.write_normalized_doc(root, relative_path, metadata, doc["body"])
-        normalized_paths.append(file_path.as_posix())
+        normalized_paths.append(cache_lib._cache_relative_path(file_path, root))
 
     timestamp = cache_lib.now_iso().replace(":", "").replace("-", "")
     raw_name = f"{timestamp}_{cache_lib.slugify(args.service,'service')}-api.{('json' if source_type in {'openapi','json'} else 'html')}"
@@ -102,7 +102,7 @@ def harvest(args: argparse.Namespace) -> dict[str, Any]:
         "last_modified": header_map.get("last-modified", ""),
         "version_hint": header_map.get("x-api-version", ""),
         "hash": hashlib.sha256(content.encode("utf-8")).hexdigest(),
-        "raw_path": raw_path.resolve().as_posix(),
+        "raw_path": cache_lib._cache_relative_path(raw_path, root),
         "normalized_paths": normalized_paths,
         "ttl_days": cache_lib.FRESHNESS_TTL_DAYS.get(args.freshness, cache_lib.FRESHNESS_TTL_DAYS["volatile"]),
     }

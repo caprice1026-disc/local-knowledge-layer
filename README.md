@@ -6,6 +6,7 @@
 
 - API仕様・プロジェクト仕様・FAQ・用語集・設計判断を `raw` + `normalized` で保存
 - SQLite FTS5 (`index/knowledge.db`) で軽量全文検索
+- `index/knowledge.db` 内の `file_path` は `knowledge/...` からの相対パスで保持し、Skill を別ディレクトリへ移しても検索結果を現在の配置先へ解決
 - 検索順序を `project -> skills -> external/global -> web` に固定
 - `refresh_cache.py` で TTL / ETag / Last-Modified / version hint を使った鮮度確認
 
@@ -163,7 +164,7 @@ python -m unittest discover -s local-knowledge-layer/tests -p "test_*.py" -v
 ## バリデーション
 
 ```bash
-python C:\Users\Hodaka\.codex\skills\.system\skill-creator\scripts\quick_validate.py local-knowledge-layer
+python "$CODEX_HOME/skills/.system/skill-creator/scripts/quick_validate.py" local-knowledge-layer
 ```
 
 ## パッケージ化
@@ -175,5 +176,6 @@ Compress-Archive -Path local-knowledge-layer\* -DestinationPath skill.zip -Force
 ## 注意点
 
 - キャッシュ全体を一度に読まず、`search_cache.py` の上位ヒットだけを読む設計です。
+- インデックスは絶対パスではなく相対パスを保持するため、Skill をコピー・インストールし直した後でも `file_path` は現在の `--root` 配下へ再解決されます。
 - `search_cache.py` は記号付きクエリ（例: `c++`）でもエラーにならないよう FTS クエリを安全化しています。
 - HTML取り込み時は script/style/nav を除去して正規化しますが、最終判断は `source_url` の原本確認を推奨します。

@@ -79,7 +79,7 @@ def ingest(args: argparse.Namespace) -> dict[str, Any]:
 
     content, source_name, remote_headers = _read_source(args)
     source_type = normalize_doc.detect_source_type(source_name, content, args.source_type)
-    source_url = args.source_url or (Path(args.input_path).resolve().as_uri() if args.input_path else "manual://inline")
+    source_url = cache_lib.source_reference(args.input_path, args.source_url)
 
     docs = normalize_doc.normalize_source(
         kind=args.kind,
@@ -123,7 +123,7 @@ def ingest(args: argparse.Namespace) -> dict[str, Any]:
             idx=idx,
         )
         file_path = cache_lib.write_normalized_doc(root, relative_path, metadata, doc["body"])
-        normalized_paths.append(file_path.as_posix())
+        normalized_paths.append(cache_lib._cache_relative_path(file_path, root))
 
     timestamp = cache_lib.now_iso().replace(":", "").replace("-", "")
     scope = cache_lib.slugify(args.project or args.service or "general", "general")
@@ -149,7 +149,7 @@ def ingest(args: argparse.Namespace) -> dict[str, Any]:
         "last_modified": remote_headers.get("last_modified", ""),
         "version_hint": remote_headers.get("version_hint", ""),
         "hash": hashlib.sha256(content.encode("utf-8")).hexdigest(),
-        "raw_path": raw_path.resolve().as_posix(),
+        "raw_path": cache_lib._cache_relative_path(raw_path, root),
         "normalized_paths": normalized_paths,
         "ttl_days": cache_lib.FRESHNESS_TTL_DAYS.get(args.freshness, cache_lib.FRESHNESS_TTL_DAYS["medium"]),
     }
